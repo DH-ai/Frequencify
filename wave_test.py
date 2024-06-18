@@ -3,21 +3,40 @@ import sounddevice as sd
 import time
 import matplotlib as mlt
 import matplotlib.pyplot as plt
+import keyboard
 
 # Function to generate a sine wave with given frequency and duration
-def generate_sine_wave(frequency, duration, sampling_rate):
-    t = np.linspace(0, duration, int(duration * sampling_rate), endpoint=False)
-    # print(t)
-    
-    # wave = np.sin(2 * np.pi * frequency * t)
-    wave = np.sin(2 * np.pi * frequency * t)
-    # print(wave)
-    # wave=np.cos(2*np.pi*frequency*t)
-    return wave
-# y,x=generate_sine_wave(500,2,20000)
-# # Function to play the generated wave
-# print(x)
+def generate_sine_wave(frequency, duration, sampling_rate,wave_type:str="sine")->np.array:
+    """
+    Generate a sound with defualt parameter
 
+    Args:
+        frequency (int or float):
+        duration (int or float).
+        sampling rate (int or float).
+        type (str): Defaults to "sine" other arguments include , "square".
+    Returns:
+        np.array
+    """
+    t = np.linspace(0, duration, int(duration * sampling_rate), endpoint=False)
+    wave = np.sin(2 * np.pi * frequency * t)
+    if wave_type=="square":
+        print("ddas")
+        for i in range(int(duration*sampling_rate)):
+            if wave[i]>0.5:
+                wave[i]=1
+            else:
+                wave[i]=0
+    
+    
+    return wave
+
+
+def addNpArray(arr1:np.array,arr2:np.array,sr,dr)->np.array:
+    
+
+
+    return arr1+arr2
 def envelope(wave,duration:int=None)->np.array:
     size = np.shape(wave)
     print(size)
@@ -48,31 +67,11 @@ def play_wave(wave, sampling_rate):
     sd.wait()
     return "done"
 
-# play_wave(y,44000)
 
-
-
-# play_wave(wave,44000)
-# figure,axis = plt.subplots(2,1)
-
-# axis[0].plot(x,y)
-# axis[0].set_title("NM")
-# wave = envelope(y)
-
-
-# axis[1].plot(x,wave)
-# axis[1].set_title("Mod")
-# plt.show()
-# input()
-# Test different frequencies
 frequencies = [100, 200, 400, 800, 1600, 3200]  # Frequencies in Hz
 
-# for frequency in frequencies:
-#     print(f"Generating and playing sine wave with frequency: {frequency} Hz")
-#     wave = generate_sine_wave(frequency, duration, sampling_rate)
-#     play_wave(wave, sampling_rate)
+
 sampling_rate=44200
-# 5 5 6 8 8 8  8 8  8 8  5 6 8 8 8  8 8  8 8  5 6 8 8 8 8 8  8 8  8 8 7
 music_table=[392,392,440,1046.50,1046.50,1046.50,1046.50,0,1046.50,1046.50,0,1046.50,1046.50,0,392,392,440,1046.50,1046.50,1046.50,1046.50,0,1046.50,1046.50,0,1046.50,1046.50,0,392,392,440,1046.50,1046.50,1046.50,1046.50,0,1046.50,1046.50,0,1046.50,1046.50,0,1046.50,1046.50,493.88]
 musicdict={
     '1':261.63,
@@ -88,23 +87,41 @@ musicdict={
     ' ':0,
     '-':0,
     }
-duration = 0.2 # Duration of the wave in seconds
-# for freq in music_table:
-#     print(freq)
-#     play_wave(generate_sine_wave(freq,duration,sampling_rate),sampling_rate)
+duration =3
+# audioStream = input("Give input string ")
+# # dur = float(input("Duration: "))
+# wave1 = generate_sine_wave(200,duration,sampling_rate=sampling_rate)
+# wave2=generate_sine_wave(400,duration,sampling_rate=sampling_rate)
+# wave3= addNpArray(wave1,wave2,sampling_rate,duration)
+# wave4= wave2+wave1
+# wave4=generate_sine_wave(600,duration,sampling_rate=sampling_rate)
 
-audioStream = input("Give input string ")
-# dur = float(input("Duration: "))
-for note in audioStream:
-    
-    # if (musicdict[note]==0):
+# sqrWave = generate_sine_wave(200,duration,sampling_rate,"square")
+# print("Playing square wave")
+# play_wave(sqrWave,sampling_rate)
+
+# print("Playing wave 1")
+# play_wave(wave1,sampling_rate=sampling_rate)
+# print("Playing wave 2")
+# play_wave(wave2,sampling_rate=sampling_rate)
+# print("Playing wave 3")
+# play_wave(wave3,sampling_rate=sampling_rate)
+# print("Playing wave 4")
+# play_wave(wave1+wave2,sampling_rate=sampling_rate)
+# print("Playing wave 5")
+# play_wave(wave4,sampling_rate=sampling_rate)
+#square wave
+def on_key_press(event):
+    if event.name=='up':
+        print("in it")
+        play_wave(generate_sine_wave(frequency=400,duration=,sampling_rate=sampling_rate),sampling_rate)
+    elif event.name=='esc':
+        print("OUT")
+        return False
         
-    #     # wave=generate_sine_wave(10,0.1,sampling_rate)
-    #     t= time.time_ns()
-    #     # print(time.time_ns())
-    #     # time.sleep(0.1)
-    #     # print((t- time.time_ns())*-1)
-    # else:
-    
-    wave = generate_sine_wave(musicdict[note],duration,sampling_rate)
-    play_wave(wave,sampling_rate)
+def main ():
+    keyboard.hook(  on_key_press)
+    keyboard.wait('esc')
+
+main()
+
